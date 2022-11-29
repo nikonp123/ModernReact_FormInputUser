@@ -1,90 +1,50 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
+import useInput from '../hooks/use-input';
 
 const SomeInput = (props) => {
-  const [enteredName, setEnteredName] = useState('');
-  // const [isEnteredNameValid, setIsEnteredNameValid] = useState(true);
-  const [wasInputNameTouched, setWasInputNameTouched] = useState(false);
-  const isEnteredNameValid = enteredName.trim() !== '';
-  const isInputNameInvalid = !isEnteredNameValid && wasInputNameTouched;
+  const {
+    value: enteredName,
+    isEnteredlValid: isEnteredNameValid,
+    hasError: hasNameInputError,
+    inputChangeHandler: nameInputChangeHandler,
+    inputLostFocusHandler: nameInputLostFocusHandler,
+    resetValues: resetNameInputValues,
+  } = useInput((val) => val.trim() !== '');
 
-  const [enteredEmail, setEnteredEmail] = useState('');
-  const [wasInputEmailTouched, setWasInputEmailTouched] = useState(false);
-  const isEnteredEmailValid = enteredEmail.includes('@');
-  const isInputEmailInvalid = !isEnteredEmailValid && wasInputEmailTouched;
+  const {
+    value: enteredEmail,
+    isEnteredlValid: isEnteredEmailValid,
+    hasError: hasEmailInputError,
+    inputChangeHandler: emailInputChangeHandler,
+    inputLostFocusHandler: emailInputLostFocusHandler,
+    resetValues: resetEmailInputValues,
+  } = useInput((val) => val.includes('@'));
 
   let isFormValid = false;
   if (isEnteredNameValid && isEnteredEmailValid) {
     isFormValid = true;
   }
 
-  // //not good practice uses useEffect, better - use variable aka isInputNameInvalid
-  // const [isFormValid, setIsFormValid] = useState(false);
-  // useEffect(() => {
-  //   if (isEnteredNameValid) {
-  //     setIsFormValid(true);
-  //   } else {
-  //     setIsFormValid(false);
-  //   }
-  // }, [isEnteredNameValid]);
-
   const nameLastInputRef = useRef();
-
-  const nameInputChangeHandler = (e) => {
-    // const currentValue = e.target.value;
-    setEnteredName(e.target.value);
-    // if (currentValue.trim() !== '') {
-    //   setIsEnteredNameValid(true);
-    // }
-  };
-
-  const inputNameLostFocusHandler = (e) => {
-    setWasInputNameTouched(true);
-    // if (e.target.value.trim() === '') {
-    //   setIsEnteredNameValid(false);
-    //   //сделаем это при каждом нажатии клавиши
-    //   // } else {
-    //   //   setIsEnteredNameValid(true);
-    // }
-  };
-
-  const nameEmailChangeHandler = (e) => {
-    setEnteredEmail(e.target.value);
-  };
-
-  const inputEmailLostFocusHandler = (e) => {
-    setWasInputEmailTouched(true);
-  };
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    setWasInputNameTouched(true);
-    setWasInputEmailTouched(true);
 
-    if (!isEnteredNameValid || !isEnteredEmailValid) {
-      return;
-    }
-    // if (enteredName.trim() === '') {
-    //   setIsEnteredNameValid(false);
-    //   return;
-    // }
-    // setIsEnteredNameValid(true);
     console.log(enteredName);
-    setEnteredName('');
-    setWasInputNameTouched(false);
-
     console.log(enteredEmail);
-    setEnteredEmail('');
-    setWasInputEmailTouched(false);
+
+    resetNameInputValues();
+    resetEmailInputValues();
 
     console.log(nameLastInputRef.current.value);
     nameLastInputRef.current.value = ''; //not best practice
   };
 
-  const nameInputClasses = isInputNameInvalid
+  const nameInputClasses = hasNameInputError
     ? 'form-control invalid'
     : 'form-control';
 
-  const emailInputClasses = isInputEmailInvalid
+  const emailInputClasses = hasEmailInputError
     ? 'form-control invalid'
     : 'form-control';
 
@@ -96,10 +56,10 @@ const SomeInput = (props) => {
           type="text"
           id="name"
           onChange={nameInputChangeHandler}
-          onBlur={inputNameLostFocusHandler}
+          onBlur={nameInputLostFocusHandler}
           value={enteredName}
         />
-        {isInputNameInvalid && <p className="error-text">Enter valid name</p>}
+        {hasNameInputError && <p className="error-text">Enter valid name</p>}
       </div>
       <div className="form-control">
         <label htmlFor="lastName">Введите фамилию (useRef)</label>
@@ -110,13 +70,11 @@ const SomeInput = (props) => {
         <input
           type="email"
           id="eMail"
-          onChange={nameEmailChangeHandler}
-          onBlur={inputEmailLostFocusHandler}
+          onChange={emailInputChangeHandler}
+          onBlur={emailInputLostFocusHandler}
           value={enteredEmail}
         />
-        {isInputEmailInvalid && (
-          <p className="error-text">Enter valid e-mail</p>
-        )}
+        {hasEmailInputError && <p className="error-text">Enter valid e-mail</p>}
       </div>
       <div className="form-actions">
         <button disabled={!isFormValid}>Отправить</button>
