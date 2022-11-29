@@ -1,9 +1,11 @@
-import SomeInput from "./components/SomeInput";
+import SomeForm from './components/SomeForm';
+import SomeInput from './components/SomeInput';
 
 function App() {
   return (
     <div className="app">
       <SomeInput />
+      <SomeForm />
     </div>
   );
 }
