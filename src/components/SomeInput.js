@@ -1,31 +1,55 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const SomeInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
-  const [isEnteredNameValid, setIsEnteredNameValid] = useState(true);
+  // const [isEnteredNameValid, setIsEnteredNameValid] = useState(true);
+  const [wasInputNameTouched, setWasInputNameTouched] = useState(false);
+  const isEnteredNameValid = enteredName.trim() !== '';
+  const isInputNameInvalid = !isEnteredNameValid && wasInputNameTouched;
 
   const nameLastInputRef = useRef();
 
   const nameInputChangeHandler = (e) => {
+    // const currentValue = e.target.value;
     setEnteredName(e.target.value);
+    // if (currentValue.trim() !== '') {
+    //   setIsEnteredNameValid(true);
+    // }
+  };
+
+  const inputNameLostFocusHandler = (e) => {
+    setWasInputNameTouched(true);
+    // if (e.target.value.trim() === '') {
+    //   setIsEnteredNameValid(false);
+    //   //сделаем это при каждом нажатии клавиши
+    //   // } else {
+    //   //   setIsEnteredNameValid(true);
+    // }
   };
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    if (enteredName.trim() === '') {
-      setIsEnteredNameValid(false);
+    setWasInputNameTouched(true);
+
+    if (!isEnteredNameValid) {
       return;
     }
-    setIsEnteredNameValid(true);
+    // if (enteredName.trim() === '') {
+    //   setIsEnteredNameValid(false);
+    //   return;
+    // }
+    // setIsEnteredNameValid(true);
     console.log(enteredName);
-    console.log(nameLastInputRef.current.value);
     setEnteredName('');
+    setWasInputNameTouched(false);
+
+    console.log(nameLastInputRef.current.value);
     nameLastInputRef.current.value = ''; //not best practice
   };
 
-  const nameInputClasses = isEnteredNameValid
-    ? 'form-control'
-    : 'form-control invalid';
+  const nameInputClasses = isInputNameInvalid
+    ? 'form-control invalid'
+    : 'form-control';
 
   return (
     <form onSubmit={formSubmitHandler}>
@@ -35,9 +59,10 @@ const SomeInput = (props) => {
           type="text"
           id="name"
           onChange={nameInputChangeHandler}
+          onBlur={inputNameLostFocusHandler}
           value={enteredName}
         />
-        {!isEnteredNameValid && <p className="error-text">Enter valid name</p>}
+        {isInputNameInvalid && <p className="error-text">Enter valid name</p>}
       </div>
       <div className="form-control">
         <label htmlFor="lastName">Введите фамилию (useRef)</label>
