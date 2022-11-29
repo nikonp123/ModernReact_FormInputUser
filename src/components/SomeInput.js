@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 const SomeInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
@@ -7,8 +7,13 @@ const SomeInput = (props) => {
   const isEnteredNameValid = enteredName.trim() !== '';
   const isInputNameInvalid = !isEnteredNameValid && wasInputNameTouched;
 
+  const [enteredEmail, setEnteredEmail] = useState('');
+  const [wasInputEmailTouched, setWasInputEmailTouched] = useState(false);
+  const isEnteredEmailValid = enteredEmail.includes('@');
+  const isInputEmailInvalid = !isEnteredEmailValid && wasInputEmailTouched;
+
   let isFormValid = false;
-  if (isEnteredNameValid) {
+  if (isEnteredNameValid && isEnteredEmailValid) {
     isFormValid = true;
   }
 
@@ -42,11 +47,20 @@ const SomeInput = (props) => {
     // }
   };
 
+  const nameEmailChangeHandler = (e) => {
+    setEnteredEmail(e.target.value);
+  };
+
+  const inputEmailLostFocusHandler = (e) => {
+    setWasInputEmailTouched(true);
+  };
+
   const formSubmitHandler = (e) => {
     e.preventDefault();
     setWasInputNameTouched(true);
+    setWasInputEmailTouched(true);
 
-    if (!isEnteredNameValid) {
+    if (!isEnteredNameValid || !isEnteredEmailValid) {
       return;
     }
     // if (enteredName.trim() === '') {
@@ -58,11 +72,19 @@ const SomeInput = (props) => {
     setEnteredName('');
     setWasInputNameTouched(false);
 
+    console.log(enteredEmail);
+    setEnteredEmail('');
+    setWasInputEmailTouched(false);
+
     console.log(nameLastInputRef.current.value);
     nameLastInputRef.current.value = ''; //not best practice
   };
 
   const nameInputClasses = isInputNameInvalid
+    ? 'form-control invalid'
+    : 'form-control';
+
+  const emailInputClasses = isInputEmailInvalid
     ? 'form-control invalid'
     : 'form-control';
 
@@ -82,6 +104,19 @@ const SomeInput = (props) => {
       <div className="form-control">
         <label htmlFor="lastName">Введите фамилию (useRef)</label>
         <input type="text" id="lastName" ref={nameLastInputRef} />
+      </div>
+      <div className={emailInputClasses}>
+        <label htmlFor="eMail">Введите e-mail</label>
+        <input
+          type="email"
+          id="eMail"
+          onChange={nameEmailChangeHandler}
+          onBlur={inputEmailLostFocusHandler}
+          value={enteredEmail}
+        />
+        {isInputEmailInvalid && (
+          <p className="error-text">Enter valid e-mail</p>
+        )}
       </div>
       <div className="form-actions">
         <button disabled={!isFormValid}>Отправить</button>
