@@ -100,3 +100,12 @@ button:active {
 .error-text {
   color: #e60808;
 }
+
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+  /* background-color: #fff; */
+  color: rgb(150, 149, 149);
+  border-color: rgb(235, 233, 233);
+  cursor: not-allowed;
+}

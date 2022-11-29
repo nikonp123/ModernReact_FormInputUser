@@ -7,6 +7,21 @@ const SomeInput = (props) => {
   const isEnteredNameValid = enteredName.trim() !== '';
   const isInputNameInvalid = !isEnteredNameValid && wasInputNameTouched;
 
+  let isFormValid = false;
+  if (isEnteredNameValid) {
+    isFormValid = true;
+  }
+
+  // //not good practice uses useEffect, better - use variable aka isInputNameInvalid
+  // const [isFormValid, setIsFormValid] = useState(false);
+  // useEffect(() => {
+  //   if (isEnteredNameValid) {
+  //     setIsFormValid(true);
+  //   } else {
+  //     setIsFormValid(false);
+  //   }
+  // }, [isEnteredNameValid]);
+
   const nameLastInputRef = useRef();
 
   const nameInputChangeHandler = (e) => {
@@ -69,7 +84,7 @@ const SomeInput = (props) => {
         <input type="text" id="lastName" ref={nameLastInputRef} />
       </div>
       <div className="form-actions">
-        <button>Отправить</button>
+        <button disabled={!isFormValid}>Отправить</button>
       </div>
     </form>
   );
