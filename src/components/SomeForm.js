@@ -41,6 +41,11 @@ const SomeForm = (props) => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
+
+    //юзер может убрать disable у кнопки ч/з инструменты разработчика, поэтому эта проверка нужна
+    if (!isFormValid) {
+      return;
+    }
     console.log(enteredFirstName);
     console.log(enteredLasttName);
     console.log(enteredEmail);

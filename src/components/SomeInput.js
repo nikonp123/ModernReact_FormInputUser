@@ -30,6 +30,13 @@ const SomeInput = (props) => {
   const formSubmitHandler = (e) => {
     e.preventDefault();
 
+    if (!isFormValid) {
+      return;
+    }
+    // if (!isEnteredNameValid || !isEnteredEmailValid) {
+    //   return;
+    // }
+
     console.log(enteredName);
     console.log(enteredEmail);
 
